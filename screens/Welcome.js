@@ -1,29 +1,32 @@
 import React from "react";
 import styled from "styled-components";
+import { colors } from "../colors";
+import AuthLayout from "../components/auth/AuthLayout";
+import AuthButton from "../components/auth/AuthButton";
 
-const Container = styled.View`
-
+const LoginLink = styled.Text`
+    color: ${colors.blue};
+    font-weight: 600;
+    margin: 20px auto;
 `;
 
-const Text = styled.Text`
-
-`;
-
-const TouchableOpacity = styled.TouchableOpacity`
-
-`;
+const TouchableOpacity = styled.TouchableOpacity``;
 
 const Welcome = ({ navigation }) => {
+    const goToCreateAccount = () => navigation.navigate("CreateAccount");
+    const goToLogin = () => navigation.navigate("Login");
+
     return (
-        <Container>
-            <Text>Welcome</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("CreateAccount")}>
-                <Text>Go to CreateAccount</Text>
+        <AuthLayout>
+            <AuthButton 
+                onPress={goToCreateAccount}
+                disabled={false}
+                text="Create New Account"
+            />
+            <TouchableOpacity onPress={goToLogin}>
+                <LoginLink>Log In</LoginLink>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                <Text>Go to Login</Text>
-            </TouchableOpacity>
-        </Container>
+        </AuthLayout>
     )
 };
 

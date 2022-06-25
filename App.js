@@ -1,15 +1,19 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 /* import AppLoading from 'expo-app-loading'; */
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from "expo-font";
 import { Asset } from 'expo-asset';
+import { useColorScheme } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import LoggedOutNav from './navigators/LoggedOutNav';
 
 export default function App() {
   const [ loading, setLoading ] = useState(true);
 
+  /* Themes (Light/Dark Mode): https://reactnavigation.org/docs/themes/#using-the-operating-system-preferences */
+  const colorScheme = useColorScheme();
+  
   /* Replaced by SplashScreen (AppLoading is Deprecated) */
   /* const preload = () => {
     const fontsToLoad = [Ionicons.font];
@@ -60,7 +64,7 @@ export default function App() {
   /* onLayout in View -> onReady in Navigation Container */
   /* onReady: https://reactnavigation.org/docs/navigation-container/#onready */
   return (
-    <NavigationContainer onReady={onLayout}>
+    <NavigationContainer onReady={onLayout} theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <LoggedOutNav />
     </NavigationContainer>
   );

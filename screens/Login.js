@@ -1,26 +1,24 @@
 import React from "react";
 import styled from "styled-components";
-
-const Container = styled.View`
-
-`;
-
-const Text = styled.Text`
-
-`;
-
-const TouchableOpacity = styled.TouchableOpacity`
-
-`;
+import AuthLayout from "../components/auth/AuthLayout";
+import { AuthInput } from "../components/auth/AuthShared";
 
 const Login = ({ navigation }) => {
     return (
-        <Container>
-            <Text>Login</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("CreateAccount")}>
-                <Text>Go to CreateAccount</Text>
-            </TouchableOpacity>
-        </Container>
+        <AuthLayout>
+            <AuthInput 
+                placeholder="Username"
+                placeholderTextColor={"rgba(255, 255, 255, 0.6)"}
+                returnKeyType="next"
+            />
+            <AuthInput 
+                placeholder="Password"
+                placeholderTextColor={"rgba(255, 255, 255, 0.6)"}
+                returnKeyType="done"
+                secureTextEntry
+                lastOne={true}
+            />
+        </AuthLayout>
     )
 };
 
