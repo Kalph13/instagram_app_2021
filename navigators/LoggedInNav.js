@@ -23,7 +23,7 @@ const LoggedInNav = () => {
             }}
         >
             <Tabs.Screen
-                name="Feed"
+                name="Feed "
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <TabIcon iconName={"home"} color={color} focused={focused} />
@@ -33,7 +33,7 @@ const LoggedInNav = () => {
                 {() => <StackNavigators screenName="Feed" />}
             </Tabs.Screen>
             <Tabs.Screen 
-                name="Search" 
+                name="Search " 
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <TabIcon iconName={"search"} color={color} focused={focused} />
@@ -52,7 +52,7 @@ const LoggedInNav = () => {
                 }}
             />
             <Tabs.Screen 
-                name="Notification" 
+                name="Notification " 
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <TabIcon iconName={"heart"} color={color} focused={focused} />
@@ -62,7 +62,7 @@ const LoggedInNav = () => {
                 {() => <StackNavigators screenName="Notification" />}
             </Tabs.Screen>
             <Tabs.Screen 
-                name="Profile" 
+                name="Profile " 
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <TabIcon iconName={"person"} color={color} focused={focused} />
