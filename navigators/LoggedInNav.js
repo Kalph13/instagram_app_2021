@@ -1,14 +1,9 @@
 import React from "react";
+import { View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import StackNavigators from "../components/nav/StackNavigators";
+import StackNavigators from "./StackNavigators";
 import TabIcon from "../components/nav/TabIcon";
-
-import Feed from "../screens/Feed";
-import Search from "../screens/Search";
-import Notification from "../screens/Notification";
-import Profile from "../screens/Profile";
-import MyPage from "../screens/MyPage";
 
 const Tabs = createBottomTabNavigator();
 
@@ -16,6 +11,7 @@ const LoggedInNav = () => {
     return (
         <Tabs.Navigator
             screenOptions={{
+                headerShown: false,
                 tabBarActiveTintColor: "#ffffff",
                 tabBarshowLabel: false,
                 tabBarActiveBackgroundColor: "#000000",
@@ -48,7 +44,7 @@ const LoggedInNav = () => {
             </Tabs.Screen>
             <Tabs.Screen 
                 name="Camera" 
-                component={Search}
+                component={View}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <TabIcon iconName={"camera"} color={color} focused={focused} />
