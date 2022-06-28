@@ -62,14 +62,14 @@ const LoggedInNav = () => {
                 {() => <StackNavigators screenName="Notification" />}
             </Tabs.Screen>
             <Tabs.Screen 
-                name="Profile " 
+                name="MyPage " 
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         <TabIcon iconName={"person"} color={color} focused={focused} />
                     )
                 }}
             >
-                {() => <StackNavigators screenName="Profile" />}
+                {() => <StackNavigators screenName="MyPage" />}
             </Tabs.Screen>
         </Tabs.Navigator>
     );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 
 const Container = styled.View`
@@ -12,7 +12,15 @@ const Text = styled.Text`
     color: #ffffff;
 `;
 
-const Profile = () => {
+const Profile = ({ navigation, route }) => {
+    useEffect(() => {
+        if (route?.params?.username) {
+            navigation.setOptions({
+                title: route.params.username
+            });
+        }
+    });
+
     return (
         <Container>
             <Text>Profile</Text>

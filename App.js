@@ -61,7 +61,7 @@ export default function App() {
         await persistCache({
           cache,
           storage: new AsyncStorageWrapper(AsyncStorage),
-          serialize: false /* Whether to Serialize to JSON (Default: true) */
+          serialize: true /* Whether to Serialize to JSON (Default: true) */
         })
       } catch (e) {
         console.warn(e);
