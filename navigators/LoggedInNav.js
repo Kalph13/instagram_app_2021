@@ -1,13 +1,16 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Image } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import StackNavigators from "./StackNavigators";
 import TabIcon from "../components/nav/TabIcon";
+import useFindMe from "../hooks/useFindMe";
 
 const Tabs = createBottomTabNavigator();
 
 const LoggedInNav = () => {
+    const { data } = useFindMe();
+
     return (
         <Tabs.Navigator
             screenOptions={{
@@ -65,7 +68,19 @@ const LoggedInNav = () => {
                 name="MyPage " 
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
-                        <TabIcon iconName={"person"} color={color} focused={focused} />
+                        data?.me?.avatar ? (
+                            <Image 
+                                source={{ uri: data.me.avatar }}
+                                style={{
+                                    height: 20,
+                                    width: 20,
+                                    borderRadius: 10,
+                                    ...(focused && { borderColor: "#ffffff", borderWidth: 1 })
+                                }}
+                            />
+                        ) : (
+                            <TabIcon iconName={"person"} color={color} focused={focused} />
+                        )
                     )
                 }}
             >
