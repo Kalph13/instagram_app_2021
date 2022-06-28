@@ -7,7 +7,8 @@ import AuthButton from "../components/auth/AuthButton";
 const LoginLink = styled.Text`
     color: ${colors.blue};
     font-weight: 600;
-    margin: 20px auto;
+    margin-top: 20px;
+    text-align: center;
 `;
 
 const TouchableOpacity = styled.TouchableOpacity``;
