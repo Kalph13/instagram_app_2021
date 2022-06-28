@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
+import { gql, useMutation } from "@apollo/client";
 import { useWindowDimensions, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import PropTypes from "prop-types";
+import styled from "styled-components";
 import { Ionicons } from "@expo/vector-icons";
+
+const TOGGLE_LIKE_MUTATION = gql`
+    mutation ToggleLike($toggleLikeId: Int!) {
+        toggleLike(id: $toggleLikeId) {
+            toggleLikeSucceed
+            toggleLikeError
+        }
+    }
+`;
 
 const Container = styled.View``;
 
@@ -68,9 +78,52 @@ const Photo = ({ id, user, caption, file, isLiked, likes }) => {
         });
     }, [file]);
 
+    const updateToggleLike = (cache, result) => {
+        const {
+            data: {
+                toggleLike: {
+                    toggleLikeSucceed
+                }
+            }
+        } = result;
+
+        if (toggleLikeSucceed) {
+            const photoID = `Photo:${id}`;
+
+            cache.modify({
+                id: photoID,
+                fields: {
+                    isLiked(prev) {
+                        return !prev;
+                    },
+                    likes(prev) {
+                        if (isLiked) {
+                            return prev - 1;
+                        }
+                        return prev + 1;
+                    }
+                }
+            });
+        }
+    };
+
+    const [ toggleLikeMutation ] = useMutation(TOGGLE_LIKE_MUTATION, {
+        variables: {
+            toggleLikeId: id
+        },
+        update: updateToggleLike
+    });
+
+    const goToProfile = () => {
+        navigation.navigate("Profile", {
+            id: user.id,
+            username: user.username
+        });
+    };
+
     return (
         <Container>
-            <Header onPress={() => navigation.navigate("Profile")}>
+            <Header onPress={goToProfile}>
                 <UserAvatar resizeMode="cover" source={{ uri: user.avatar }} />
                 <Username>{user.username}</Username>
             </Header>
@@ -84,7 +137,7 @@ const Photo = ({ id, user, caption, file, isLiked, likes }) => {
             />
             <ActionContainer>
                 <Actions>
-                    <Action>
+                    <Action onPress={toggleLikeMutation}>
                         <Ionicons 
                             name={isLiked ? "heart" : "heart-outline"}
                             color={isLiked ? "tomato" : "white"}
@@ -95,11 +148,11 @@ const Photo = ({ id, user, caption, file, isLiked, likes }) => {
                         <Ionicons name="chatbubble-outline" color="white" size={22} />
                     </Action>
                 </Actions>
-                <TouchableOpacity onPress={() => navigation.navigate("Likes")}>
+                <TouchableOpacity onPress={() => navigation.navigate("Likes", { photoID: id })}>
                     <Likes>{likes === 1 ? "1 like" : `${likes} likes`}</Likes>
                 </TouchableOpacity>
                 <Caption>
-                    <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+                    <TouchableOpacity onPress={goToProfile}>
                         <Username>{user.username}</Username>
                     </TouchableOpacity>
                     <CaptionText>{caption}</CaptionText>

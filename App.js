@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { ApolloProvider, useReactiveVar } from '@apollo/client';
-import client, { isLoggedInVar, tokenVar } from './apollo';
+import client, { isLoggedInVar, tokenVar, cache } from './apollo';
 /* import AppLoading from 'expo-app-loading'; */
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from "expo-font";
@@ -11,6 +11,9 @@ import { Ionicons } from "@expo/vector-icons";
 import LoggedInNav from './navigators/LoggedInNav';
 import LoggedOutNav from './navigators/LoggedOutNav';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+/* apollo3-cache-persist: When to Use Cache along with AsyncStorage or localStorage (https://github.com/apollographql/apollo-cache-persist#readme) */
+import { persistCache, AsyncStorageWrapper } from "apollo3-cache-persist";
 
 export default function App() {
   const [ loading, setLoading ] = useState(true);
@@ -54,6 +57,12 @@ export default function App() {
           isLoggedInVar(true);
           tokenVar(token);
         }
+
+        await persistCache({
+          cache,
+          storage: new AsyncStorageWrapper(AsyncStorage),
+          serialize: false /* Whether to Serialize to JSON (Default: true) */
+        })
       } catch (e) {
         console.warn(e);
       } finally {

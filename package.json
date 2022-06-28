@@ -17,6 +17,7 @@
     "@react-navigation/bottom-tabs": "^6.3.1",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/stack": "^6.2.1",
+    "apollo3-cache-persist": "^0.14.0",
     "expo": "~45.0.0",
     "expo-app-loading": "~2.0.0",
     "expo-asset": "~8.5.0",

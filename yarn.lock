@@ -10,7 +10,7 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@apollo/client@^3.6.9":
+"@apollo/client@^3.2.5", "@apollo/client@^3.6.9":
   "integrity" "sha512-Y1yu8qa2YeaCUBVuw08x8NHenFi0sw2I3KCu7Kw9mDSu86HmmtHJkCAifKVrN2iPgDTW/BbP3EpSV8/EQCcxZA=="
   "resolved" "https://registry.npmjs.org/@apollo/client/-/client-3.6.9.tgz"
   "version" "3.6.9"
@@ -3438,6 +3438,11 @@
   dependencies:
     "normalize-path" "^3.0.0"
     "picomatch" "^2.0.4"
+
+"apollo3-cache-persist@^0.14.0":
+  "integrity" "sha512-jT3wkB3IJGNyK1XTtS2WbaAyD/Z9Z4HuFEsU0kIpYceqdtT8gV1kNSX+4YMBt0XgS954zMKY6cs8Q4zt7NNPeQ=="
+  "resolved" "https://registry.npmjs.org/apollo3-cache-persist/-/apollo3-cache-persist-0.14.0.tgz"
+  "version" "0.14.0"
 
 "appdirsjs@^1.2.4":
   "integrity" "sha512-D8wJNkqMCeQs3kLasatELsddox/Xqkhp+J07iXGyL54fVN7oc+nmNfYzGuCs1IEP6uBw+TfpuO3JKwc+lECy4w=="
