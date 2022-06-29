@@ -7,13 +7,13 @@ import Search from "../screens/Search";
 import Notification from "../screens/Notification";
 import MyPage from "../screens/MyPage";
 import Profile from "../screens/Profile";
-import Photo from "../screens/Photo";
+import SeePhoto from "../screens/SeePhoto";
 import Likes from "../screens/Likes";
 import Comments from "../screens/Comments";
 
 const Stack = createStackNavigator();
 
-const StackNavigators = ({ screenName }) => {
+const StackNav = ({ screenName }) => {
     return (
         <Stack.Navigator
             screenOptions={{
@@ -55,11 +55,11 @@ const StackNavigators = ({ screenName }) => {
                 <Stack.Screen name={"MyPage"} component={MyPage} />
             ) : null}
             <Stack.Screen name="Profile" component={Profile} />
-            <Stack.Screen name="Photo" component={Photo} />
+            <Stack.Screen name="SeePhoto" component={SeePhoto} />
             <Stack.Screen name="Likes" component={Likes} />
             <Stack.Screen name="Comments" component={Comments} />
         </Stack.Navigator>
     );
 };
 
-export default StackNavigators;
+export default StackNav;

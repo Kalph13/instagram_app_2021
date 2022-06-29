@@ -172,7 +172,7 @@ Photo.propTypes = {
     file: PropTypes.string.isRequired,
     isLiked: PropTypes.bool.isRequired,
     likes: PropTypes.number.isRequired,
-    commentsNumber: PropTypes.number.isRequired,
+    commentsNumber: PropTypes.number,
 }
 
 export default Photo;

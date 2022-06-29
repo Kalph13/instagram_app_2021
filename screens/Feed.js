@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { gql, useQuery } from "@apollo/client";
 import { PHOTO_FRAGMENT, COMMENT_FRAGMENT } from "../fragments";
 import ScreenLayout from "../components/ScreenLayout";
-import Photo from "./Photo";
+import Photo from "../components/Photo";
 
 const FEED_QUERY = gql`
     query SeeFeed($offset: Int!) {
