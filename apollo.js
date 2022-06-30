@@ -25,6 +25,9 @@ export const isLoggedOutObj = async (token) => {
 const httpLink = createHttpLink({
     /* Use the IP Address Instead of Localhost When Using Actual Smartphone Devices */
     uri: "http://172.30.1.37:4000/graphql"
+
+    /* Or Use Local Tunnel (https://github.com/localtunnel/localtunnel) */
+    /* Ref: https://kibua20.tistory.com/151 */
 });
 
 const authLink = setContext((_, { headers }) => {

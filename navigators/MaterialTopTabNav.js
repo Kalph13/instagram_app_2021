@@ -24,6 +24,7 @@ const MaterialTopTabNav = () => {
                 }
             }}
         >
+            <Tabs.Screen name="TakePhoto" component={TakePhoto} />
             <Tabs.Screen name="SelectPhoto ">
                 {() => (
                     <Stack.Navigator
@@ -43,7 +44,6 @@ const MaterialTopTabNav = () => {
                     </Stack.Navigator>
                 )}
             </Tabs.Screen>
-            <Tabs.Screen name="TakePhoto" component={TakePhoto} />
         </Tabs.Navigator>
     );
 };

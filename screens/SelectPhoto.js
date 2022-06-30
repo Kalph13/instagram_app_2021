@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useWindowDimensions, Image, FlatList } from "react-native";
+import { useWindowDimensions, StatusBar, TouchableOpacity, Image, FlatList } from "react-native";
 import styled from "styled-components";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../colors";
@@ -22,8 +22,6 @@ const Bottom = styled.View`
     background-color: #000000;
 `;
 
-const TouchableOpacity = styled.TouchableOpacity``;
-
 const IconContainer = styled.View`
     position: absolute;
     bottom: 5px;
@@ -38,7 +36,7 @@ const HeaderRightText = styled.Text`
 `;
 
 const SelectPhoto = ({ navigation }) => {
-    const [ access, setAccess ] = useState(false);
+    const [ permitted, setPermitted ] = useState(false);
     const [ photos, setPhotos ] = useState([]);
     const [ selectedPhoto, setSelectedPhoto ] = useState("");
 
@@ -46,7 +44,7 @@ const SelectPhoto = ({ navigation }) => {
     const { width } = useWindowDimensions();
 
     const getPhotos = async () => {
-        if (access) {
+        if (permitted) {
             const { assets: photos } = await MediaLibrary.getAssetsAsync();
             setPhotos(photos);
             setSelectedPhoto(photos[0]?.uri);
@@ -63,12 +61,14 @@ const SelectPhoto = ({ navigation }) => {
             const { granted } = await MediaLibrary.requestPermissionsAsync();
 
             if (granted === true) {
-                setAccess(true);
-                getPhotos();
+                setPermitted(true);
+                /* This Doesn't Work Well (getPhoto() is Called Before setPermitted() is Finished), So Moved getPhoto() in the separate useEffect() */
+                /* getPhotos(); */
             }
         } else if (granted === true) {
-            setAccess(true);
-            getPhotos();
+            setPermitted(true);
+            /* This Doesn't Work Well (getPhoto() is Called Before setPermitted() is Finished), So Moved getPhoto() in the separate useEffect() */
+            /* getPhotos(); */
         }
     };
 
@@ -99,10 +99,15 @@ const SelectPhoto = ({ navigation }) => {
         navigation.setOptions({
             headerRight: HeaderRight
         });
-    }, [access]);
+    }, []);
+
+    useEffect(() => {
+        getPhotos();
+    }, [permitted]);
 
     return (
         <Container>
+            <StatusBar />
             <Top>
                 {selectedPhoto !== "" ? (
                     <Image 

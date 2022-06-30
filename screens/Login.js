@@ -43,7 +43,7 @@ const Login = ({ route: { params } }) => {
         }
     };
 
-    const [ loginMutation, { loading } ] = useMutation(LOGIN_MUTATION, {
+    const [ loginMutation, { loading, error } ] = useMutation(LOGIN_MUTATION, {
         onCompleted
     });
 
