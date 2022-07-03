@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Alert, StatusBar, TouchableOpacity, Image } from "react-native";
-import styled from "styled-components";
-import * as MediaLibrary from "expo-media-library";
+import { useIsFocused } from "@react-navigation/native";
 import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
+import styled from "styled-components";
 import { Ionicons } from "@expo/vector-icons";
 
 /* React Native Slider: https://www.npmjs.com/package/@react-native-community/slider */
@@ -69,12 +70,10 @@ const TakePhoto = ({ navigation }) => {
     const getPermission = async () => {
         const { granted } = await Camera.requestCameraPermissionsAsync();
         setPermitted(granted);
-        console.log("permitted", permitted);
     };
 
     const onCameraReady = () => {
         setCameraReady(true);
-        console.log("cameraReady", cameraReady);
     }
 
     const onCameraSwitch = () => {
@@ -109,13 +108,14 @@ const TakePhoto = ({ navigation }) => {
         }
     };
 
-    const onDismiss = () => setTakenPhoto("");
-
     const onUploadAsync = async (save) => {
         if (save) {
             await MediaLibrary.saveToLibraryAsync(takenPhoto);
         }
-        console.log("onUploadAsync", takenPhoto);
+        
+        navigation.navigate("UploadForm", {
+            file: takenPhoto
+        });
     }
 
     const onUpload = () => {
@@ -130,6 +130,10 @@ const TakePhoto = ({ navigation }) => {
             }
         ]);
     };
+    
+    const onDismiss = () => setTakenPhoto("");
+    
+    const isFocused = () => useIsFocused();
 
     useEffect(() => {
         navigation.addListener("tabPress", () => {
@@ -139,7 +143,7 @@ const TakePhoto = ({ navigation }) => {
 
     return (
         <Container>
-            <StatusBar hidden={true} />
+            {isFocused ? <StatusBar hidden={true} /> : null}
             {takenPhoto === "" ? ( 
                 <Camera type={cameraType} style={{ flex: 1 }} flashMode={flashMode} zoom={zoom} ref={camera} onCameraReady={onCameraReady}>
                     <CloseButton onPress={() => navigation.navigate("BottomTabNav")}>

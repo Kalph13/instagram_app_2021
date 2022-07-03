@@ -89,17 +89,26 @@ const SelectPhoto = ({ navigation }) => {
     );
 
     const HeaderRight = () => (
-        <TouchableOpacity>
+        <TouchableOpacity
+            onPress={() => 
+                navigation.navigate("UploadForm", {
+                    file: selectedPhoto
+                })
+            }
+        >
             <HeaderRightText>Next</HeaderRightText>
         </TouchableOpacity>
     );
 
     useEffect(() => {
         getPermission();
+    }, []);
+
+    useEffect(() => {
         navigation.setOptions({
             headerRight: HeaderRight
         });
-    }, []);
+    }, [selectedPhoto]);
 
     useEffect(() => {
         getPhotos();
@@ -107,7 +116,7 @@ const SelectPhoto = ({ navigation }) => {
 
     return (
         <Container>
-            <StatusBar />
+            <StatusBar hidden={false} />
             <Top>
                 {selectedPhoto !== "" ? (
                     <Image 

@@ -1,5 +1,7 @@
 import { ApolloClient, InMemoryCache, makeVar, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context"
+import { onError } from "@apollo/client/link/error";
+import { createUploadLink } from "apollo-upload-client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /* Offset-based Pagination: https://www.apollographql.com/docs/react/pagination/offset-based */
@@ -22,12 +24,17 @@ export const isLoggedOutObj = async (token) => {
     tokenVar(null);
 };
 
-const httpLink = createHttpLink({
-    /* Use the IP Address Instead of Localhost When Using Actual Smartphone Devices */
+/* Replaced by createUploadLink */
+/* const httpLink = createHttpLink({
+    / Use the IP Address Instead of Localhost When Using Actual Smartphone Devices
     uri: "http://172.30.1.37:4000/graphql"
 
-    /* Or Use Local Tunnel (https://github.com/localtunnel/localtunnel) */
-    /* Ref: https://kibua20.tistory.com/151 */
+    // Or Use Local Tunnel (https://github.com/localtunnel/localtunnel)
+    // Ref: https://kibua20.tistory.com/151
+}); */
+
+const uploadHttpLink = createUploadLink({
+    uri: "http://172.30.1.37:4000/graphql/"
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -36,6 +43,15 @@ const authLink = setContext((_, { headers }) => {
             ...headers,
             authorization: tokenVar(),
         }
+    }
+});
+
+const onErrorLink = onError(({ graphQLErrors, networkError }) => {
+    if (graphQLErrors) {
+        console.log("GraphQL Error", graphQLErrors);
+    }
+    if (networkError) {
+        console.log("Network Error", networkError);
     }
 });
 
@@ -50,7 +66,7 @@ export const cache = new InMemoryCache({
 });
 
 const client = new ApolloClient({
-    link: authLink.concat(httpLink),
+    link: authLink.concat(onErrorLink).concat(uploadHttpLink),
     cache,
 });
 
