@@ -131,7 +131,7 @@ const Photo = ({ id, user, caption, file, isLiked, likes }) => {
                 resizeMode="cover"
                 style={{
                     width,
-                    height: imageHeight
+                    height: width
                 }}
                 source={{ uri: file }}
             />
