@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React, { useState, useEffect } from "react";
 import { gql, useQuery } from "@apollo/client";
+import styled from "styled-components";
+import { Ionicons } from "@expo/vector-icons";
 import { PHOTO_FRAGMENT, COMMENT_FRAGMENT } from "../fragments";
 import ScreenLayout from "../components/ScreenLayout";
 import Photo from "../components/Photo";
@@ -30,7 +31,11 @@ const FlatList = styled.FlatList`
     width: 100%;
 `;
 
-const Feed = () => {
+const TouchableOpacity = styled.TouchableOpacity`
+    margin-right: 25px;
+`;
+
+const Feed = ({ navigation }) => {
     const { data, loading, refetch, fetchMore } = useQuery(FEED_QUERY, {
         variables: {
             offset: 0
@@ -48,6 +53,20 @@ const Feed = () => {
         await refetch();
         setRefreshing(false);
     };
+
+    const messageButton = () => (
+        <TouchableOpacity
+            onPress={() => navigation.navigate("MessageNav")}
+        >
+            <Ionicons name="paper-plane" color="white" size={20} />
+        </TouchableOpacity>
+    );
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerRight: messageButton
+        })
+    }, []);
 
     return (
         <ScreenLayout loading={loading}>
