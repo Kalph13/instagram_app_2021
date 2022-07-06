@@ -34,7 +34,7 @@ export const isLoggedOutObj = async (token) => {
 }); */
 
 const uploadHttpLink = createUploadLink({
-    uri: "http://172.30.1.37:4000/graphql/"
+    uri: "http://172.30.1.48:4000/graphql/"
 });
 
 const authLink = setContext((_, { headers }) => {

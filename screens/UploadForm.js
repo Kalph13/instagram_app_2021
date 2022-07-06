@@ -46,7 +46,30 @@ const HeaderRightText = styled.Text`
 `;
 
 const UploadForm = ({ route, navigation }) => {
-    const [ uploadPhotoMutation, { data, loading, error }] = useMutation(UPLOAD_PHOTO_MUTATION);
+    const updateUploadPhoto = (cache, result) => {
+        const {
+            data: { uploadPhoto }
+        } = result;
+
+        if (uploadPhoto.id) {
+            cache.modify({
+                id: "ROOT_QUERY",
+                fields: {
+                    seeFeed(prev) {
+                        return [uploadPhoto, ...prev];
+                    }
+                }
+            })
+        }
+
+        navigation.navigate("BottomTabNav");
+    };
+
+    const [ uploadPhotoMutation, { loading }] = useMutation(UPLOAD_PHOTO_MUTATION, 
+        {
+            update: updateUploadPhoto
+        }
+    );
 
     const HeaderRight = () => (
         <TouchableOpacity onPress={handleSubmit(onValid)}>
@@ -67,9 +90,6 @@ const UploadForm = ({ route, navigation }) => {
             type: "image/jpeg"
         });
 
-        console.log("File", file);
-        console.log("Caption", caption);
-
         uploadPhotoMutation({
             variables: {
                 file,
@@ -77,7 +97,7 @@ const UploadForm = ({ route, navigation }) => {
             }
         });
     };
-
+ 
     useEffect(() => {
         register("caption");
     }, [register]);
@@ -88,9 +108,6 @@ const UploadForm = ({ route, navigation }) => {
             ...(loading && { headerLeft: () => null })
         });
     }, [loading]);
-
-    console.log("uploadPhotoMutation Data", data);
-    console.log("uploadPhotoMutation Error", error);
 
     return (
         <DismissKeyboard>
