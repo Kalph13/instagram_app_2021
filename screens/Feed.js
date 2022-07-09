@@ -41,7 +41,7 @@ const Feed = ({ navigation }) => {
             offset: 0
         }
     })
-
+    
     const renderPhoto = ({ item: photo }) => {
         return <Photo {...photo} />;
     };
