@@ -29,8 +29,7 @@ const FlatList = styled.FlatList`
 `;
 
 const Rooms = () => {    
-    const { data, loading } = useQuery(SEE_ROOMS_QUERY);
-        
+    const { data, loading } = useQuery(SEE_ROOMS_QUERY);        
     const renderItem = ({ item: room }) => <RoomItem {...room} />;
 
     return (
@@ -40,7 +39,7 @@ const Rooms = () => {
                 data={data?.seeRooms}
                 keyExtractor={room => "" + room.id}
                 renderItem={renderItem}
-                ItemSeparatorComponent={<Separator />}
+                ItemSeparatorComponent={() => <Separator />}
             />}
         </ScreenLayout>
     );

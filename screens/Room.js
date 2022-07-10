@@ -1,10 +1,24 @@
 import React, { useEffect } from "react";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useQuery, useMutation, useSubscription } from "@apollo/client";
 import styled from "styled-components";
 import ScreenLayout from "../components/ScreenLayout";
 import { useForm } from "react-hook-form";
 import useFindMe from "../hooks/useFindMe";
 import { Ionicons } from "@expo/vector-icons";
+
+const ROOM_UPDATE_SUBSCRIPTION = gql`
+    subscription RoomUpdate($roomUpdateId: Int!) {
+        roomUpdate(id: $roomUpdateId) {
+            id
+            payload
+            user {
+                username
+                avatar
+            }
+            read
+        }
+    }
+`;
 
 const SEE_ROOM_QUERY = gql`
     query seeRoom($id: Int!) {
@@ -151,7 +165,7 @@ const Room = ({ route, navigation }) => {
         update: updateSendMessage
     });
 
-    const { data, loading } = useQuery(SEE_ROOM_QUERY, {
+    const { data, loading, subscribeToMore } = useQuery(SEE_ROOM_QUERY, {
         variables: {
             id: route?.params?.id
         }
@@ -167,6 +181,69 @@ const Room = ({ route, navigation }) => {
             })
         }
     };
+
+    const client = useApolloClient();
+
+    const updateQuery = (prev, options) => {
+        console.log("------ updateQuery Executed ------");
+        
+        const {
+            subscriptionData: {
+                data: {
+                    roomUpdate: message
+                }
+            }
+        } = options;
+
+        console.log("options", options);
+
+        if (message.id) {
+            const incomingMessage = client.cache.writeFragment({
+                fragment: gql`
+                    fragment NewMessage on Message {
+                        id
+                        payload
+                        user {
+                            username
+                            avatar
+                        }
+                        read
+                    }
+                `,
+                data: message
+            });
+
+            client.cache.modify({
+                id: `Room:${route.params.id}`,
+                fields: {
+                    messages(prev) {
+                        const existingMessage = prev.find(
+                            aMessage => aMessage.__ref === incomingMessage.__ref
+                        );
+                        
+                        if (existingMessage) {
+                            return prev;
+                        }
+                        
+                        return [...prev, incomingMessage];
+                    }
+                }
+            });
+        }
+    };
+
+    useEffect(() => {
+        if (data?.seeRoom) {
+            subscribeToMore({
+                document: ROOM_UPDATE_SUBSCRIPTION,
+                variables: {
+                    roomUpdateId: route?.params?.id
+                },
+                updateQuery
+            });
+            console.log("------ subscribeToMore Done ------");
+        }
+    }, [data]);
 
     useEffect(() => {
         register("message", { required: true });

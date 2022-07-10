@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache, makeVar, createHttpLink } from "@apollo/client";
+import { ApolloClient, InMemoryCache, makeVar, createHttpLink, split } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context"
 import { onError } from "@apollo/client/link/error";
 import { createUploadLink } from "apollo-upload-client";
@@ -6,6 +6,19 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /* Offset-based Pagination: https://www.apollographql.com/docs/react/pagination/offset-based */
 import { offsetLimitPagination } from "@apollo/client/utilities";
+
+/* Replaced by graphql-ws */
+/* Subscription (subscription-transport-ws): https://www.apollographql.com/docs/react/data/subscriptions/#the-older-subscriptions-transport-ws-library */
+/* import { WebSocketLink } from "@apollo/client/link/ws"; */
+/* import { SubscriptionClient } from "subscriptions-transport-ws"; */
+
+/* Subscription in Apollo 3 (Requires Apollo Client > v3.5.10, Requires > v3.6.4 for Expo, Requires v3.4.17 for GraphQL Upload) */
+/* - Doc: https://www.apollographql.com/docs/react/data/subscriptions/#2-initialize-a-graphqlwslink */
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+import { createClient } from "graphql-ws";
+
+/* Subscription (getMainDefinition for split): https://www.apollographql.com/docs/react/data/subscriptions/#3-split-communication-by-operation-recommended */
+import { getMainDefinition } from "@apollo/client/utilities";
 
 export const isLoggedInVar = makeVar(false);
 export const tokenVar = makeVar("");
@@ -37,11 +50,29 @@ const uploadHttpLink = createUploadLink({
     uri: "http://172.30.1.48:4000/graphql/"
 });
 
+/* Replaced by graphql-ws */
+/* const wsLink = new WebSocketLink(
+    new SubscriptionClient("ws://172.30.1.48:4000/graphql/", {
+        connectionParams: {
+            authorization: tokenVar()
+        }
+    })
+); */
+
+/* Subscription in Apollo 3 (Requires Apollo Client > v3.5.10, Requires > v3.6.4 for Expo, Requires v3.4.17 for GraphQL Upload) */
+/* - Doc: https://www.apollographql.com/docs/react/data/subscriptions/#2-initialize-a-graphqlwslink */
+const wsLink = new GraphQLWsLink(createClient({
+    url: 'ws://172.30.1.48:4000/graphql/',
+    connectionParams: {
+        authorization: tokenVar()
+    }
+}));
+
 const authLink = setContext((_, { headers }) => {
     return {
         headers: {
             ...headers,
-            authorization: tokenVar(),
+            authorization: tokenVar()
         }
     }
 });
@@ -65,9 +96,23 @@ export const cache = new InMemoryCache({
     }
 });
 
+const httpLinks = authLink.concat(onErrorLink).concat(uploadHttpLink);
+
+const splitLink = split(
+    ({ query }) => {
+        const definition = getMainDefinition(query);
+        return (
+            definition.kind === 'OperationDefinition' &&
+            definition.operation === 'subscription'
+        );
+    },
+    wsLink,
+    httpLinks
+);
+
 const client = new ApolloClient({
-    link: authLink.concat(onErrorLink).concat(uploadHttpLink),
-    cache,
+    link: splitLink,
+    cache
 });
 
 export default client;
