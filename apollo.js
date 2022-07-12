@@ -12,7 +12,7 @@ import { offsetLimitPagination } from "@apollo/client/utilities";
 /* import { WebSocketLink } from "@apollo/client/link/ws"; */
 /* import { SubscriptionClient } from "subscriptions-transport-ws"; */
 
-/* Subscription in Apollo 3 (Requires Apollo Client > v3.5.10, Requires > v3.6.4 for Expo, Requires v3.4.17 for GraphQL Upload) */
+/* Subscription in Apollo 3 w/graphql-ws (Requires Apollo Client > v3.5.10, Requires > v3.6.4 for Expo, Requires v3.4.17 for GraphQL Upload) */
 /* - Doc: https://www.apollographql.com/docs/react/data/subscriptions/#2-initialize-a-graphqlwslink */
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
@@ -47,28 +47,12 @@ export const isLoggedOutObj = async (token) => {
 }); */
 
 const uploadHttpLink = createUploadLink({
-    uri: "http://172.30.1.48:4000/graphql/"
+    uri: "https://project-instagram-2021.herokuapp.com/graphql"
+    /* uri: "http://172.30.1.48:4000/graphql/" */
 });
 
-/* Replaced by graphql-ws */
-/* const wsLink = new WebSocketLink(
-    new SubscriptionClient("ws://172.30.1.48:4000/graphql/", {
-        connectionParams: {
-            authorization: tokenVar()
-        }
-    })
-); */
-
-/* Subscription in Apollo 3 (Requires Apollo Client > v3.5.10, Requires > v3.6.4 for Expo, Requires v3.4.17 for GraphQL Upload) */
-/* - Doc: https://www.apollographql.com/docs/react/data/subscriptions/#2-initialize-a-graphqlwslink */
-const wsLink = new GraphQLWsLink(createClient({
-    url: 'ws://172.30.1.48:4000/graphql/',
-    connectionParams: {
-        authorization: tokenVar()
-    }
-}));
-
 const authLink = setContext((_, { headers }) => {
+    console.log("tokenVar:", tokenVar());
     return {
         headers: {
             ...headers,
@@ -86,17 +70,27 @@ const onErrorLink = onError(({ graphQLErrors, networkError }) => {
     }
 });
 
-export const cache = new InMemoryCache({
-    typePolicies: {
-        Query: {
-            fields: {
-                seeFeed: offsetLimitPagination()
-            }
-        }
-    }
-});
-
 const httpLinks = authLink.concat(onErrorLink).concat(uploadHttpLink);
+
+/* Replaced by graphql-ws */
+/* const wsLink = new WebSocketLink(
+    new SubscriptionClient("ws://172.30.1.48:4000/graphql/", {
+        connectionParams: {
+            authorization: tokenVar()
+        }
+    })
+); */
+
+/* Subscription in Apollo 3 w/graphql-ws (Requires Apollo Client > v3.5.10, Requires > v3.6.4 for Expo, Requires v3.4.17 for GraphQL Upload) */
+/* - Doc: https://www.apollographql.com/docs/react/data/subscriptions/#2-initialize-a-graphqlwslink */
+
+const wsLink = new GraphQLWsLink(createClient({
+    url: "wss://project-instagram-2021.herokuapp.com/graphql",
+    /* url: "ws://172.30.1.48:4000/graphql/", */
+    connectionParams: {
+        Authorization: tokenVar()
+    }
+}));
 
 const splitLink = split(
     ({ query }) => {
@@ -109,6 +103,16 @@ const splitLink = split(
     wsLink,
     httpLinks
 );
+
+export const cache = new InMemoryCache({
+    typePolicies: {
+        Query: {
+            fields: {
+                seeFeed: offsetLimitPagination()
+            }
+        }
+    }
+});
 
 const client = new ApolloClient({
     link: splitLink,
